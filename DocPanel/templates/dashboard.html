@@ -1,0 +1,514 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Tableau de bord</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(235deg, #5baed8ff 20%, #034968ff 80%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .arabic-text {
+            font-family: 'Tajawal', Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .french-text {
+            font-family: 'Inter', Arial, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .user-info h1 {
+            background: linear-gradient(135deg, #449fcc, #005a82);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .user-info p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #449fcc, #005a82);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #449fcc;
+            border: 2px solid #449fcc;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #449fcc;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .calendar-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+            color: #333;
+        }
+        
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .flash-message {
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .flash-message.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .flash-message.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .flash-message.info {
+            background: #cce7ff;
+            border: 1px solid #99d5ff;
+            color: #004085;
+        }
+
+        /* Bouton Gestion du calendrier */
+        .btn-calendar {
+            background: #4299e1;
+            color: white;
+            border: 2px solid #3182ce;
+            font-weight: 600;
+        }
+        
+        .btn-calendar:hover {
+            background: #004c74ff;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            .actions {
+                justify-content: center;
+            }
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Messages flash -->
+        <div class="flash-messages" id="flashMessages"></div>
+
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="user-info">
+                <h1 id="welcomeMessageAr">مرحباً بك في لوحة التحكم</h1>
+                <h1 id="welcomeMessageFr">Bienvenue sur votre tableau de bord</h1>
+                <p id="doctorSpecialty"><i class="fas fa-stethoscope"></i> Chargement...</p>
+                <p id="doctorLocation"><i class="fas fa-map-marker-alt"></i> Chargement...</p>
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-outline" onclick="window.location.href='/profile/edit'">
+                    <i class="fas fa-user-edit"></i> تعديل الملف / Modifier le profil
+                </button>
+                <button class="btn btn-calendar" onclick="window.location.href='/calendar/edit'">
+                    <i class="fas fa-calendar-check"></i> إدارة المواعيد / Gestion du calendrier
+                </button>
+                <button class="btn btn-outline" style="border-color: #e74c3c; color: #e74c3c;" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج / Déconnexion
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-number" id="weeksProgrammed">-</div>
+                <div class="stat-label">أسابيع مبرمجة / Semaines programmées</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="stat-number" id="totalPatients">-</div>
+                <div class="stat-label">المرضى / Patients</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="totalAppointments">-</div>
+                <div class="stat-label">المواعيد / Rendez-vous</div>
+            </div>
+        </div>
+
+        <!-- Calendrier interactif -->
+        <div class="calendar-section">
+            <div class="section-header">
+                <h2><i class="fas fa-calendar-alt"></i> جدولي الأسبوعي / Mon calendrier hebdomadaire</h2>
+            </div>
+
+            <div style="background:#f8fbff;border:1px solid #e6eef6;border-radius:12px;padding:16px;margin-bottom:24px;">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <div style="display:flex;gap:8px;">
+                        <button id="cal-prev" class="btn btn-outline"><i class="fas fa-chevron-left"></i></button>
+                        <button id="cal-today" class="btn btn-outline">Aujourd'hui</button>
+                        <button id="cal-next" class="btn btn-outline"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div id="cal-title" style="font-weight:700;font-size:1.1rem;flex:1;text-align:center;"></div>
+                    <div style="display:flex;gap:8px;">
+                        <button data-view="dayGridMonth" class="btn btn-outline" id="view-month">Mois</button>
+                        <button data-view="timeGridWeek" class="btn btn-primary" id="view-week">Semaine</button>
+                        <button data-view="timeGridDay" class="btn btn-outline" id="view-day">Jour</button>
+                    </div>
+                </div>
+                <div id="fc-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script>
+        let calendar;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadProfile();
+            initializeCalendar();
+            await loadStats();
+        });
+
+        async function loadProfile() {
+            const profile = {{ profile_data | tojson }};
+            const welcomeAr = document.getElementById('welcomeMessageAr');
+            const welcomeFr = document.getElementById('welcomeMessageFr');
+            const specialty = document.getElementById('doctorSpecialty');
+            const location = document.getElementById('doctorLocation');
+
+            if (profile && profile.nom) {
+                const nomAr = profile.nom.ar || profile.nom.fr;
+                const nomFr = profile.nom.fr;
+                const prenomAr = profile.prenom.ar || profile.prenom.fr;
+                const prenomFr = profile.prenom.fr;
+
+                welcomeAr.textContent = `مرحباً د. ${nomAr} ${prenomAr}`;
+                welcomeFr.textContent = `Bienvenue Dr. ${nomFr} ${prenomFr}`;
+
+                if (profile.specialite) {
+                    specialty.innerHTML = `<i class="fas fa-stethoscope"></i> ${profile.specialite.fr || ''}${profile.specialite.ar ? ' - ' + profile.specialite.ar : ''}`;
+                }
+                if (profile.ville) {
+                    location.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${profile.ville.fr || ''}${profile.ville.ar ? ' - ' + profile.ville.ar : ''}`;
+                }
+            }
+        }
+
+        async function loadStats() {
+            const calendarData = {{ calendar | tojson }};
+            const weeks = Object.keys(calendarData).length;
+            document.getElementById('weeksProgrammed').textContent = weeks;
+
+            try {
+                const res = await fetch('/api/events');
+                const events = await res.json();
+                const reservations = events.filter(e => e.extendedProps?.type === 'reservation');
+                document.getElementById('totalPatients').textContent = reservations.length;
+                document.getElementById('totalAppointments').textContent = events.length;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function initializeCalendar() {
+            const calendarEl = document.getElementById('fc-container');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'fr',
+                initialView: 'timeGridWeek',
+                slotMinTime: '06:00:00',
+                slotMaxTime: '20:00:00',
+                nowIndicator: true,
+                height: 'auto',
+                expandRows: true,
+                dayMaxEvents: true,
+                headerToolbar: false,
+                events: '/api/events',
+                eventClick: function(info) {
+                    const props = info.event.extendedProps;
+                    if (props.type === 'reservation') {
+                        showActionButtons(props.patient_id);
+                    }
+                },
+                eventDidMount: function(info) {
+                    info.el.style.borderRadius = '8px';
+                    info.el.style.fontSize = '12px';
+                    info.el.style.padding = '2px 6px';
+                },
+                datesSet: function() {
+                    document.getElementById('cal-title').textContent = calendar.view.title;
+                }
+            });
+
+            calendar.render();
+            setupCalendarNavigation();
+        }
+
+        function setupCalendarNavigation() {
+            document.getElementById('cal-prev').addEventListener('click', () => calendar.prev());
+            document.getElementById('cal-next').addEventListener('click', () => calendar.next());
+            document.getElementById('cal-today').addEventListener('click', () => calendar.today());
+
+            const views = ['month', 'week', 'day'];
+            views.forEach(v => {
+                document.getElementById(`view-${v}`).addEventListener('click', () => {
+                    calendar.changeView(v === 'month' ? 'dayGridMonth' : v === 'week' ? 'timeGridWeek' : 'timeGridDay');
+                    views.forEach(x => {
+                        const btn = document.getElementById(`view-${x}`);
+                        if (x === v) {
+                            btn.classList.add('btn-primary');
+                            btn.classList.remove('btn-outline');
+                        } else {
+                            btn.classList.remove('btn-primary');
+                            btn.classList.add('btn-outline');
+                        }
+                    });
+                });
+            });
+        }
+
+        function showActionButtons(patientId) {
+            if (!confirm('Voulez-vous confirmer, reporter ou annuler ce rendez-vous ?')) return;
+
+            const action = prompt('Entrez:\nC = Confirmer\nR = Reporter\nA = Annuler');
+            if (!action) return;
+
+            switch (action.toLowerCase()) {
+                case 'c':
+                    confirmReservation(patientId);
+                    break;
+                case 'r':
+                    openRescheduleModal(patientId);
+                    break;
+                case 'a':
+                    cancelReservation(patientId);
+                    break;
+                default:
+                    alert('Action non reconnue');
+            }
+        }
+
+        async function confirmReservation(patientId) {
+            try {
+                const res = await fetch(`/api/confirm_reservation/${patientId}`, { method: 'POST' });
+                if (res.ok) {
+                    showFlashMessage('success', 'Rendez-vous confirmé');
+                    calendar.refetchEvents();
+                } else {
+                    showFlashMessage('error', 'Erreur confirmation');
+                }
+            } catch (e) {
+                showFlashMessage('error', 'Erreur réseau');
+            }
+        }
+
+        function openRescheduleModal(patientId) {
+            currentReschedulePatientId = patientId;
+            document.getElementById('rescheduleModal').style.display = 'flex';
+        }
+
+        async function confirmReschedule() {
+            const newDate = document.getElementById('newDate').value;
+            const newTime = document.getElementById('newTime').value;
+            if (!newDate || !newTime) {
+                showFlashMessage('error', 'Date et heure requises');
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/reschedule_reservation/${currentReschedulePatientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ new_date: newDate, new_time: newTime })
+                });
+                if (res.ok) {
+                    closeModal('rescheduleModal');
+                    showFlashMessage('success', 'Rendez-vous reporté');
+                    calendar.refetchEvents();
+                } else {
+                    const err = await res.json();
+                    showFlashMessage('error', err.error || 'Erreur');
+                }
+            } catch (e) {
+                showFlashMessage('error', 'Erreur réseau');
+            }
+        }
+
+        async function cancelReservation(patientId) {
+            if (!confirm('Annuler ce rendez-vous ?')) return;
+            try {
+                const res = await fetch(`/api/cancel_reservation/${patientId}`, { method: 'POST' });
+                if (res.ok) {
+                    showFlashMessage('success', 'Rendez-vous annulé');
+                    calendar.refetchEvents();
+                } else {
+                    showFlashMessage('error', 'Erreur annulation');
+                }
+            } catch (e) {
+                showFlashMessage('error', 'Erreur réseau');
+            }
+        }
+
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+        function showFlashMessage(type, message) {
+            const flash = document.createElement('div');
+            flash.className = `flash-message ${type}`;
+            flash.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+            document.getElementById('flashMessages').appendChild(flash);
+            setTimeout(() => flash.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

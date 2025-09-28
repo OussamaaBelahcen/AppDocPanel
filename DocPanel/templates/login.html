@@ -1,0 +1,295 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Connexion Médicale</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-light: #449fcc;
+            --primary-dark: #005a82;
+            --primary-darker: #002f45;
+            --success-color: #91F779;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark), var(--primary-darker));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .arabic-text { font-family: 'Tajawal', Arial, sans-serif; direction: rtl; text-align: right; }
+        .french-text { font-family: 'Inter', Arial, sans-serif; direction: ltr; text-align: left; }
+
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .login-form-section { padding: 50px 40px; display: flex; flex-direction: column; justify-content: center; }
+
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .welcome-section h2 { font-size: 2.2rem; margin-bottom: 20px; font-weight: 700; }
+        .welcome-section .arabic-title { font-family: 'Tajawal', Arial, sans-serif; font-size: 2rem; margin-bottom: 15px; }
+        .welcome-section p { font-size: 1.1rem; opacity: 0.9; line-height: 1.6; margin-bottom: 10px; }
+
+        .medical-icon { font-size: 4rem; margin-bottom: 30px; opacity: 0.9; }
+
+        .login-header { text-align: center; margin-bottom: 40px; }
+        .login-header h1 {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .login-header .subtitle { color: #666; font-size: 1rem; }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #495057; font-size: 0.95rem; }
+
+        .input-container { position: relative; }
+        .input-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--primary-light); font-size: 1.1rem; }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(68,159,204,0.1);
+            transform: translateY(-2px);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(33, 96, 155, 1);
+            margin-bottom: 25px;
+        }
+
+        .login-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(68,159,204,0.4); }
+
+        .register-link { text-align: center; color: #666; font-size: 0.95rem; }
+        .register-link a { color: var(--primary-light); text-decoration: none; font-weight: 600; }
+        .register-link a:hover { text-decoration: underline; }
+
+        .flash-messages { margin-bottom: 25px; }
+        .flash-message { padding: 15px 20px; border-radius: 10px; margin-bottom: 10px; font-weight: 500; text-align: center; }
+        .flash-message.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .flash-message.success { background: var(--success-color); border: 1px solid #6be062; color: #004d00; }
+        .flash-message.info { background: #cce7ff; border: 1px solid #99d5ff; color: #004085; }
+
+        .language-switcher { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; }
+        .lang-btn {
+            padding: 8px 15px;
+            background: rgba(131, 136, 139, 0.84);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .lang-btn:hover, .lang-btn.active { background: rgba(255, 255, 255, 0.3); border-color: rgba(148, 143, 143, 0.94); }
+
+        .password-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #1976d2;
+        }
+        .password-info i { margin-right: 8px; }
+
+        .features-list { list-style: none; margin-top: 30px; }
+        .features-list li { padding: 8px 0; display: flex; align-items: center; opacity: 0.9; }
+        .features-list li i { margin-right: 15px; font-size: 1.2rem; }
+
+        .rtl-support { direction: rtl; text-align: right; }
+        .rtl-support .input-container i { right: 15px; left: auto; }
+        .rtl-support .form-group input { padding: 15px 45px 15px 15px; text-align: right; }
+
+        @media (max-width: 768px) {
+            .login-container { grid-template-columns: 1fr; margin: 10px; }
+            .welcome-section { padding: 30px 20px; }
+            .login-form-section { padding: 30px 20px; }
+            .welcome-section h2 { font-size: 1.8rem; }
+            .arabic-title { font-size: 1.6rem; }
+            .medical-icon { font-size: 3rem; margin-bottom: 20px; }
+            .language-switcher { position: relative; top: auto; right: auto; justify-content: center; margin-bottom: 20px; }
+        }
+
+        .animated-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Section Formulaire -->
+        <div class="login-form-section">
+            <div class="login-header">
+                <h1><i class="fas fa-user-md"></i> تسجيل الدخول</h1>
+                <p class="subtitle">المنصة الطبية الرقمية</p>
+            </div>
+
+            <div class="password-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>معلومة مهمة:</strong> استخدم بريدك الإلكتروني وكلمة المرور للدخول<br>
+                <strong>Information importante :</strong> Utilisez votre email et mot de passe pour vous connecter
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}">
+                                {% if category == 'success' %}
+                                    <i class="fas fa-check-circle"></i>
+                                {% elif category == 'error' %}
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                {% endif %}
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني / Email</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" placeholder="exemple@domaine.com" required value="{{ request.form.email if request.form.email }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> كلمة المرور / Mot de passe</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول / Se connecter</button>
+            </form>
+
+            <div class="register-link">
+                <p>ليس لديك حساب؟ <a href="{{ url_for('register') }}">إنشاء حساب جديد</a></p>
+                <p>Pas encore inscrit ? <a href="{{ url_for('register') }}">Créer un compte</a></p>
+            </div>
+
+            <div class="language-switcher">
+                <a href="#" class="lang-btn" onclick="switchLanguage('ar'); return false;">العربية</a>
+                <a href="#" class="lang-btn active" onclick="switchLanguage('fr'); return false;">Français</a>
+            </div>
+        </div>
+
+        <!-- Section Bienvenue -->
+        <div class="welcome-section">
+            <div class="animated-bg"></div>
+            <div class="medical-icon"><i class="fas fa-heartbeat"></i></div>
+            <h2 class="arabic-title">مرحباً بك في ClickDoc</h2>
+            <h2>Bienvenue sur ClickDoc</h2>
+            <p class="arabic-text">المنصة الطبية الرقمية المتكاملة لإدارة المواعيد </p>
+            <p class="french-text">La plateforme médicale numérique complète pour gérer vos rendez-vous</p>
+
+            <ul class="features-list">
+                <li><i class="fas fa-shield-alt"></i> <span class="arabic-text">آمن وسري</span> <span class="french-text">Sécurisé et confidentiel</span></li>
+                <li><i class="fas fa-language"></i> <span class="arabic-text">دعم ثنائي اللغة</span> <span class="french-text">Support bilingue</span></li>
+                <li><i class="fas fa-calendar-check"></i> <span class="arabic-text">إدارة المواعيد</span> <span class="french-text">Gestion des rendez-vous</span></li>
+                <li><i class="fas fa-user-md"></i> <span class="arabic-text">مجتمع طبي</span> <span class="french-text">Communauté médicale</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function switchLanguage(lang) {
+            const body = document.body;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            if(lang === 'ar') {
+                body.classList.add('rtl-support');
+                body.setAttribute('dir','rtl');
+                document.querySelector('.lang-btn:nth-child(1)').classList.add('active');
+            } else {
+                body.classList.remove('rtl-support');
+                body.setAttribute('dir','ltr');
+                document.querySelector('.lang-btn:nth-child(2)').classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userLang = navigator.language || navigator.userLanguage;
+            if(userLang.startsWith('ar')) { switchLanguage('ar'); }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+

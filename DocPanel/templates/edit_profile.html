@@ -1,0 +1,963 @@
+<!--edit_profile.html-->
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحرير الملف الشخصي - Modifier le Profil</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #449fcc 0%, #005a82 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .arabic-text {
+            font-family: 'Tajawal', Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .french-text {
+            font-family: 'Inter', Arial, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .edit-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            margin: 20px 0;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #449fcc;
+            color: #449fcc;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            background: #449fcc;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .header h1 {
+            background: linear-gradient(135deg, #449fcc, #005a82);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.0rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #449fcc, #005a82);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .form-sections {
+            display: grid;
+            gap: 30px;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #e9ecef;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #449fcc;
+        }
+        
+        .section-header h3 {
+            color: #449fcc;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .section-header .icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #449fcc, #005a82);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+        
+        .bilingual-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+        
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+        }
+        
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #449fcc;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .input-group.arabic input,
+        .input-group.arabic textarea {
+            font-family: 'Tajawal', Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .input-group.french input,
+        .input-group.french textarea {
+            font-family: 'Inter', Arial, sans-serif;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .language-badge {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            background: #449fcc;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            z-index: 10;
+        }
+        
+        .arabic .language-badge {
+            left: 10px;
+            right: auto;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .validation-status {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .validation-status.valid {
+            color: #28a745;
+            opacity: 1;
+        }
+        
+        .validation-status.invalid {
+            color: #dc3545;
+            opacity: 1;
+        }
+        
+        .arabic .validation-status {
+            left: 15px;
+            right: auto;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .submit-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 160px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #449fcc, #005a82);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #449fcc;
+            border: 2px solid #449fcc;
+        }
+        
+        .btn-secondary:hover {
+            background: #449fcc;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .flash-messages {
+            margin-bottom: 30px;
+        }
+        
+        .flash-message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .flash-message.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .flash-message.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .requirements-info {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border: 1px solid #2196f3;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .requirements-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #449fcc, #005a82);
+        }
+        
+        .requirements-info h4 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .requirements-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            list-style: none;
+        }
+        
+        .requirements-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #424242;
+        }
+        
+        .requirements-list li i {
+            color: #4caf50;
+            font-size: 0.8rem;
+        }
+        
+        .character-counter {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+        
+        .character-counter.warning {
+            color: #ff9800;
+        }
+        
+        .character-counter.error {
+            color: #f44336;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .edit-card {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .bilingual-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .submit-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .back-btn {
+                position: static;
+                margin-bottom: 20px;
+                width: fit-content;
+            }
+            
+            .requirements-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="edit-card">
+            <!-- Header -->
+            <div class="header">
+                <a href="{{ url_for('dashboard') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>العودة-Retour
+                </a>
+                
+                <h1>    
+                    <i class="fas fa-user-edit"></i>
+                    تحرير الملف الشخصي - Modifier le Profil
+                </h1>
+                <p class="subtitle">تحديث المعلومات الطبية والشخصية - Mise à jour des informations médicales et personnelles</p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            
+            <!-- Requirements Info -->
+            <div class="requirements-info">
+                <h4>
+                    <i class="fas fa-info-circle"></i>
+                    متطلبات التحديث - Exigences de mise à jour
+                </h4>
+                <ul class="requirements-list">
+                    <li><i class="fas fa-check"></i> جميع الحقول مطلوبة بالألغتين</li>
+                    <li><i class="fas fa-check"></i> Tous les champs requis en 2 langues</li>
+                    <li><i class="fas fa-check"></i> النص العربي في الحقول العربية</li>
+                    <li><i class="fas fa-check"></i> Texte français dans champs français</li>
+                    <li><i class="fas fa-check"></i> التحقق التلقائي من اللغة</li>
+                    <li><i class="fas fa-check"></i> Validation automatique de langue</li>
+                </ul>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="flash-message error">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Form -->
+            <form method="POST" id="editProfileForm" class="form-sections">
+                <!-- Section 1: Informations Personnelles -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>المعلومات الشخصية - Informations Personnelles</h3>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="nom_fr">Nom (Français) *</label>
+                            <input type="text" id="nom_fr" name="nom_fr" value="{{ data.nom_fr or '' }}" 
+                                   required maxlength="50" data-field="nom" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="nom_fr">0/50</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="nom_ar" class="arabic-text">الاسم (عربي) *</label>
+                            <input type="text" id="nom_ar" name="nom_ar" value="{{ data.nom_ar or '' }}" 
+                                   required maxlength="50" data-field="nom" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="nom_ar">0/50</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="prenom_fr">Prénom (Français) *</label>
+                            <input type="text" id="prenom_fr" name="prenom_fr" value="{{ data.prenom_fr or '' }}" 
+                                   required maxlength="50" data-field="prenom" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="prenom_fr">0/50</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="prenom_ar" class="arabic-text">الاسم الأول (عربي) *</label>
+                            <input type="text" id="prenom_ar" name="prenom_ar" value="{{ data.prenom_ar or '' }}" 
+                                   required maxlength="50" data-field="prenom" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="prenom_ar">0/50</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 2: Informations Professionnelles -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h3>المعلومات المهنية - Informations Professionnelles</h3>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="specialite_fr">Spécialité (Français) *</label>
+                            <input type="text" id="specialite_fr" name="specialite_fr" value="{{ data.specialite_fr or '' }}" 
+                                   required maxlength="100" data-field="specialite" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="specialite_fr">0/100</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="specialite_ar" class="arabic-text">التخصص (عربي) *</label>
+                            <input type="text" id="specialite_ar" name="specialite_ar" value="{{ data.specialite_ar or '' }}" 
+                                   required maxlength="100" data-field="specialite" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="specialite_ar">0/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="type_diplome_fr">Type de Diplôme (Français) *</label>
+                            <input type="text" id="type_diplome_fr" name="type_diplome_fr" value="{{ data.type_diplome_fr or '' }}" 
+                                   required maxlength="100" data-field="type_diplome" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="type_diplome_fr">0/100</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="type_diplome_ar" class="arabic-text">نوع الشهادة (عربي) *</label>
+                            <input type="text" id="type_diplome_ar" name="type_diplome_ar" value="{{ data.type_diplome_ar or '' }}" 
+                                   required maxlength="100" data-field="type_diplome" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="type_diplome_ar">0/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="secteur_fr">Secteur (Français) *</label>
+                            <input type="text" id="secteur_fr" name="secteur_fr" value="{{ data.secteur_fr or '' }}" 
+                                   required maxlength="100" data-field="secteur" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="secteur_fr">0/100</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="secteur_ar" class="arabic-text">القطاع (عربي) *</label>
+                            <input type="text" id="secteur_ar" name="secteur_ar" value="{{ data.secteur_ar or '' }}" 
+                                   required maxlength="100" data-field="secteur" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="secteur_ar">0/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="activite_fr">Activité (Français) *</label>
+                            <input type="text" id="activite_fr" name="activite_fr" value="{{ data.activite_fr or '' }}" 
+                                   required maxlength="200" data-field="activite" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="activite_fr">0/200</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="activite_ar" class="arabic-text">النشاط (عربي) *</label>
+                            <input type="text" id="activite_ar" name="activite_ar" value="{{ data.activite_ar or '' }}" 
+                                   required maxlength="200" data-field="activite" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="activite_ar">0/200</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 3: Informations Géographiques -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3>المعلومات الجغرافية - Informations Géographiques</h3>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="ville_fr">Ville (Français) *</label>
+                            <input type="text" id="ville_fr" name="ville_fr" value="{{ data.ville_fr or '' }}" 
+                                   required maxlength="100" data-field="ville" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="ville_fr">0/100</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="ville_ar" class="arabic-text">المدينة (عربي) *</label>
+                            <input type="text" id="ville_ar" name="ville_ar" value="{{ data.ville_ar or '' }}" 
+                                   required maxlength="100" data-field="ville" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="ville_ar">0/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="quartier_fr">Quartier (Français) *</label>
+                            <input type="text" id="quartier_fr" name="quartier_fr" value="{{ data.quartier_fr or '' }}" 
+                                   required maxlength="100" data-field="quartier" data-lang="fr">
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="quartier_fr">0/100</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="quartier_ar" class="arabic-text">الحي (عربي) *</label>
+                            <input type="text" id="quartier_ar" name="quartier_ar" value="{{ data.quartier_ar or '' }}" 
+                                   required maxlength="100" data-field="quartier" data-lang="ar">
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="quartier_ar">0/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group french">
+                            <label for="adresse_fr">Adresse (Français) *</label>
+                            <textarea id="adresse_fr" name="adresse_fr" rows="3" required 
+                                    maxlength="300" data-field="adresse" data-lang="fr">{{ data.adresse_fr or '' }}</textarea>
+                            <span class="language-badge">FR</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="adresse_fr">0/300</div>
+                        </div>
+                        <div class="input-group arabic">
+                            <label for="adresse_ar" class="arabic-text">العنوان (عربي) *</label>
+                            <textarea id="adresse_ar" name="adresse_ar" rows="3" required 
+                                    maxlength="300" data-field="adresse" data-lang="ar">{{ data.adresse_ar or '' }}</textarea>
+                            <span class="language-badge">عر</span>
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="adresse_ar">0/300</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section 4: Informations de Contact -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3>معلومات الاتصال - Informations de Contact</h3>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group full-width">
+                            <label for="tel">Téléphone - الهاتف *</label>
+                            <input type="tel" id="tel" name="tel" value="{{ data.tel or '' }}" required 
+                                   maxlength="20" pattern="[0-9+\-\s()]+">
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="tel">0/20</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bilingual-row">
+                        <div class="input-group full-width">
+                            <label for="email">Email - البريد الإلكتروني *</label>
+                            <input type="email" id="email" name="email" value="{{ data.email or '' }}" required 
+                                   maxlength="100">
+                            <span class="validation-status"></span>
+                            <div class="character-counter" data-target="email">0/100</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Section -->
+                <div class="submit-section">
+                    <div class="submit-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i>
+                            حفظ التغييرات - Enregistrer les modifications
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            إلغاء - Annuler
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let formData = {};
+        let autoSaveTimer;
+        
+        // Expressions régulières pour validation
+        const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+        const frenchRegex = /[a-zA-ZàâäéèêëïîôöùûüÿçÀÂÄÉÈÊËÏÎÔÖÙÛÜŸÇ]/;
+        const phoneRegex = /^[\d+\-\s()]{8,20}$/;
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeForm();
+            setupValidation();
+            setupCharacterCounters();
+            updateProgress();
+        });
+        
+        function initializeForm() {
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                formData[input.name] = input.value;
+                
+                input.addEventListener('input', function() {
+                    handleInputChange(this);
+                });
+                
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+                
+                // Validation initiale
+                if (input.value) {
+                    validateField(input);
+                    updateCharacterCounter(input);
+                }
+            });
+        }
+        
+        function handleInputChange(input) {
+            formData[input.name] = input.value;
+            validateField(input);
+            updateCharacterCounter(input);
+            updateProgress();
+        }
+        
+        function validateField(input) {
+            const field = input.getAttribute('data-field');
+            const lang = input.getAttribute('data-lang');
+            const value = input.value.trim();
+            const validationIcon = input.parentElement.querySelector('.validation-status');
+            
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (input.hasAttribute('required') && !value) {
+                isValid = false;
+                errorMessage = 'Champ requis - حقل مطلوب';
+            } else if (value) {
+                if (lang === 'ar' && !arabicRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'استخدم النص العربي فقط';
+                } else if (lang === 'fr' && !frenchRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Utilisez uniquement le texte français';
+                } else if (input.type === 'tel' && !phoneRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Format de téléphone invalide - تنسيق هاتف غير صحيح';
+                }
+            }
+            
+            // Mise à jour visuelle
+            if (validationIcon) {
+                if (isValid && value) {
+                    validationIcon.innerHTML = '<i class="fas fa-check"></i>';
+                    validationIcon.className = 'validation-status valid';
+                    input.style.borderColor = '#28a745';
+                } else if (!isValid) {
+                    validationIcon.innerHTML = '<i class="fas fa-times"></i>';
+                    validationIcon.className = 'validation-status invalid';
+                    input.style.borderColor = '#dc3545';
+                    input.title = errorMessage;
+                } else {
+                    validationIcon.className = 'validation-status';
+                    input.style.borderColor = '#e9ecef';
+                    input.title = '';
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function updateCharacterCounter(input) {
+            const maxLength = input.getAttribute('maxlength');
+            const currentLength = input.value.length;
+            const counterId = input.getAttribute('data-target') || input.id;
+            const counter = document.querySelector(`[data-target="${counterId}"]`);
+            
+            if (counter && maxLength) {
+                counter.textContent = `${currentLength}/${maxLength}`;
+                
+                if (currentLength > maxLength * 0.9) {
+                    counter.className = 'character-counter error';
+                } else if (currentLength > maxLength * 0.7) {
+                    counter.className = 'character-counter warning';
+                } else {
+                    counter.className = 'character-counter';
+                }
+            }
+        }
+        
+        function setupCharacterCounters() {
+            document.querySelectorAll('input[maxlength], textarea[maxlength]').forEach(input => {
+                updateCharacterCounter(input);
+            });
+        }
+        
+        function setupValidation() {
+            const form = document.getElementById('editProfileForm');
+            form.addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    showValidationErrors();
+                }
+            });
+        }
+        
+        function validateForm() {
+            const inputs = document.querySelectorAll('input[required], textarea[required]');
+            let isValid = true;
+            let firstInvalidField = null;
+            
+            inputs.forEach(input => {
+                if (!validateField(input)) {
+                    isValid = false;
+                    if (!firstInvalidField) {
+                        firstInvalidField = input;
+                    }
+                }
+            });
+            
+            // Validation bilingue - s'assurer que les paires fr/ar sont complétées
+            const bilingualFields = ['nom', 'prenom', 'specialite', 'ville', 'quartier', 'adresse', 'type_diplome', 'secteur', 'activite'];
+            
+            bilingualFields.forEach(field => {
+                const frInput = document.querySelector(`[name="${field}_fr"]`);
+                const arInput = document.querySelector(`[name="${field}_ar"]`);
+                
+                if (frInput && arInput) {
+                    if (frInput.value.trim() && !arInput.value.trim()) {
+                        isValid = false;
+                        if (!firstInvalidField) firstInvalidField = arInput;
+                    } else if (arInput.value.trim() && !frInput.value.trim()) {
+                        isValid = false;
+                        if (!firstInvalidField) firstInvalidField = frInput;
+                    }
+                }
+            });
+            
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+                firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            return isValid;
+        }
+        
+        function showValidationErrors() {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'flash-message error';
+            errorDiv.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i>
+                يرجى التحقق من الحقول المطلوبة وصحة البيانات - Veuillez vérifier les champs requis et la validité des données
+            `;
+            
+            const form = document.getElementById('editProfileForm');
+            form.insertBefore(errorDiv, form.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+        
+        function updateProgress() {
+            const totalFields = document.querySelectorAll('input[required], textarea[required]').length;
+            const completedFields = document.querySelectorAll('.validation-status.valid').length;
+            const progress = (completedFields / totalFields) * 100;
+            
+            const progressFill = document.getElementById('progressFill');
+            if (progressFill) {
+                progressFill.style.width = `${Math.min(progress, 100)}%`;
+            }
+        }
+        
+        // Raccourcis clavier
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + S pour sauvegarder
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('editProfileForm').submit();
+            }
+            
+            // Échap pour annuler
+            if (e.key === 'Escape') {
+                if (confirm('هل تريد العودة بدون حفظ التغييرات؟ - Voulez-vous revenir sans sauvegarder ?')) {
+                    window.location.href = "{{ url_for('dashboard') }}";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

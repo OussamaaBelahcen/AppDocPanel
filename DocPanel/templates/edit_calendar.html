@@ -1,0 +1,499 @@
+<!-- edit_calendar.html -->
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المواعيد المحجوزة - Rendez-vous réservés</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #004a69ff 40%, #3a89aaff 70%);
+            min-height: 100vh;
+            color: #2d3748;
+            padding: 20px;
+        }
+        
+        .arabic-text {
+            font-family: 'Tajawal', Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 25px 40px 20px;
+            background: linear-gradient(135deg, #6aadd1ff 30%, #005a82 80%);
+            color: white;
+        }
+        
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #005a82;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .appointments-list {
+            padding: 0 30px 30px;
+        }
+        
+        .appointment-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .patient-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .datetime-badge {
+            background: #ebf4ff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #3182ce;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            min-width: 140px;
+            text-align: right;
+        }
+        
+        .datetime-date {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .datetime-time {
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-top: 4px;
+        }
+        
+        .contact-info {
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+        
+        .contact-item i {
+            color: #5a9bd5;
+            width: 18px;
+            text-align: center;
+        }
+        
+        .status-label {
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            justify-content: center;
+        }
+        
+        .btn-confirm { background: #48bb78; color: white; }
+        .btn-reschedule { background: #ed8936; color: white; }
+        .btn-cancel { background: #e53e3e; color: white; }
+        
+        .btn:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #718096;
+        }
+        
+        .empty-state i {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            color: #cbd5e0;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #4a5568;
+        }
+        
+        .empty-state p {
+            line-height: 1.6;
+            color: #a0aec0;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #5a9bd5;
+        }
+        
+        .flash-messages {
+            margin: 20px 30px 0;
+        }
+        
+        .flash-message {
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .flash-message.error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+        
+        .flash-message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        
+        @media (max-width: 768px) {
+            .page-container {
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .appointments-list {
+                padding: 0 20px 20px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .datetime-badge {
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+            
+            .btn {
+                padding: 9px 14px;
+                font-size: 0.88rem;
+                min-width: auto;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1>
+                <i class="fas fa-calendar-check"></i>
+                المواعيد المحجوزة - Rendez-vous réservés
+            </h1>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message error">
+                            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="appointments-list" id="appointmentsList">
+            {% if reservations %}
+                {% for appt in reservations %}
+                    <div class="appointment-card" data-patient-id="{{ appt.patient_id }}">
+                        <div class="card-header">
+                            <div class="patient-name">{{ appt.patient_name or 'Patient' }}</div>
+                            <div class="datetime-badge">
+                                <span class="datetime-date">{{ appt.start.split('T')[0] }}</span>
+                                <span class="datetime-time">à {{ appt.start.split('T')[1].split(':')[0:2]|join(':') }}</span>
+                            </div>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                {{ appt.patient_phone or 'Non fourni' }}
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                {{ appt.patient_email or 'Non fourni' }}
+                            </div>
+                        </div>
+                        <div class="status-label">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Statut :</strong> 
+                            <span style="color: 
+                                {% if appt.status == 'confirmed' %}#48bb78
+                                {% elif appt.status == 'rescheduled' %}#ed8936
+                                {% elif appt.status == 'cancelled' %}#e53e3e
+                                {% else %}#4a5568{% endif %};">
+                                {{ appt.status }}
+                            </span>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-confirm" onclick="confirmAppointment('{{ appt.patient_id }}')">
+                                <i class="fas fa-check"></i> تأكيد / Confirmer
+                            </button>
+                            <button class="btn btn-reschedule" onclick="openRescheduleModal('{{ appt.patient_id }}')">
+                                <i class="fas fa-sync-alt"></i> إعادة جدولة / Reporter
+                            </button>
+                            <button class="btn btn-cancel" onclick="deleteAppointment('{{ appt.patient_id }}')">
+                                <i class="fas fa-trash"></i> حذف / Supprimer
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>لا توجد مواعيد محجوزة - Aucun rendez-vous réservé</h3>
+                    <p>سيظهر هنا المواعيد عندما يحجزها المرضى - Les rendez-vous apparaîtront ici une fois réservés.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="rescheduleModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 18px; color: #2d3748;">إعادة جدولة الموعد - Reporter le rendez-vous</h3>
+            <input type="hidden" id="reschedulePatientId">
+            <div class="form-group">
+                <label>التاريخ الجديد - Nouvelle date :</label>
+                <input type="date" id="newDate" required>
+            </div>
+            <div class="form-group">
+                <label>الوقت الجديد - Nouvelle heure :</label>
+                <input type="time" id="newTime" step="1800" required>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-reschedule" onclick="submitReschedule()">
+                    <i class="fas fa-check"></i> تأكيد
+                </button>
+                <button class="btn btn-cancel" onclick="closeModal('rescheduleModal')">
+                    <i class="fas fa-times"></i> إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPatientId = null;
+
+        function confirmAppointment(patientId) {
+            fetch(`/api/confirm_reservation/${patientId}`, { method: 'POST' })
+                .then(res => {
+                    if (res.ok) {
+                        alert('✅ Rendez-vous confirmé avec succès !');
+                        location.reload();
+                    } else {
+                        res.json().then(data => {
+                            alert('❌ ' + (data.error || 'Erreur lors de la confirmation.'));
+                        });
+                    }
+                })
+                .catch(() => alert('❌ Erreur réseau.'));
+        }
+
+        function openRescheduleModal(patientId) {
+            currentPatientId = patientId;
+            document.getElementById('rescheduleModal').style.display = 'flex';
+        }
+
+        function submitReschedule() {
+            const newDate = document.getElementById('newDate').value;
+            const newTime = document.getElementById('newTime').value;
+            if (!newDate || !newTime) {
+                alert('يرجى تحديد التاريخ والوقت - Veuillez choisir date et heure.');
+                return;
+            }
+
+            fetch(`/api/reschedule_reservation/${currentPatientId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ new_date: newDate, new_time: newTime })
+            })
+            .then(res => {
+                if (res.ok) {
+                    closeModal('rescheduleModal');
+                    alert('✅ Rendez-vous reporté avec succès !');
+                    location.reload();
+                } else {
+                    res.json().then(data => {
+                        alert('❌ ' + (data.error || 'Erreur lors du report.'));
+                    });
+                }
+            })
+            .catch(() => alert('❌ Erreur réseau.'));
+        }
+
+        function deleteAppointment(patientId) {
+            if (confirm('هل أنت متأكد من حذف هذا الموعد نهائياً؟\nVoulez-vous vraiment supprimer ce rendez-vous ?')) {
+                fetch(`/api/delete_reservation/${patientId}`, { method: 'DELETE' })
+                    .then(res => {
+                        if (res.ok) {
+                            alert('✅ Rendez-vous supprimé.');
+                            location.reload();
+                        } else {
+                            res.json().then(data => {
+                                alert('❌ ' + (data.error || 'Erreur lors de la suppression.'));
+                            });
+                        }
+                    })
+                    .catch(() => alert('❌ Erreur réseau.'));
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            currentPatientId = null;
+        }
+    </script>
+</body>
+</html>

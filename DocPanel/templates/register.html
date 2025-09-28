@@ -1,0 +1,229 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل طبيب جديد - Inscription Médecin</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-light: #4facfe;
+    --primary-dark: #005a82;
+    --bg-light: #f0f8ff;
+    --error-color: #f8b4b4;
+    --success-color: #a0e7a0;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-light);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+.arabic-text { font-family: 'Tajawal', Arial, sans-serif; direction: rtl; text-align: right; }
+.french-text { font-family: 'Inter', Arial, sans-serif; direction: ltr; text-align: left; }
+
+.container { max-width:800px; margin:0 auto; padding:20px; }
+
+.register-card {
+    background: rgba(255,255,255,0.95);
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(64, 69, 80, 0.6);
+    backdrop-filter: blur(10px);
+    padding:40px;
+    margin:20px 0;
+}
+
+.header { text-align:center; margin-bottom:40px; }
+.header h1 {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size:2.2rem;
+    font-weight:700;
+    margin-bottom:10px;
+}
+.header .subtitle { color:#666; font-size:1.1rem; }
+
+.required-note {
+    background: #fff8dc;
+    border: 1px solid #ffe8a1;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:30px;
+    color:#856404;
+    text-align:center;
+}
+
+.form-section { margin-bottom:30px; }
+.form-group { margin-bottom:20px; }
+.form-group label { display:block; margin-bottom:8px; font-weight:500; color:#495057; }
+.form-group input, .form-group select, .form-group textarea {
+    width:100%;
+    padding:15px 20px;
+    border:2px solid #e9ecef;
+    border-radius:10px;
+    font-size:1rem;
+    transition: all 0.3s ease;
+    background:white;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline:none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(79,172,254,0.15);
+    transform: translateY(-2px);
+}
+
+.submit-section { text-align:center; margin-top:30px; }
+.submit-btn {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+    color:white;
+    border:none;
+    padding:18px 50px;
+    border-radius:50px;
+    font-size:1.1rem;
+    font-weight:600;
+    cursor:pointer;
+    transition: all 0.3s ease;
+    box-shadow:0 8px 20px rgba(37, 104, 163, 1);
+}
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow:0 12px 30px rgba(79,172,254,0.4);
+}
+
+.login-link { margin-top:20px; color:#666; }
+.login-link a { color: var(--primary-light); text-decoration:none; font-weight:500; }
+.login-link a:hover { text-decoration:underline; }
+
+.flash-messages { margin-bottom:20px; }
+.flash-message {
+    padding:15px 20px;
+    border-radius:10px;
+    margin-bottom:10px;
+    font-weight:500;
+    text-align:center;
+}
+.flash-message.error { background: var(--error-color); border:1px solid #f5c6cb; color:#721c24; }
+.flash-message.success { background: var(--success-color); border:1px solid #6be062; color:#155724; }
+
+@media (max-width:768px) {
+    .register-card { padding:20px; margin:10px; }
+    .header h1 { font-size:1.8rem; }
+}
+
+.icon { color: var(--primary-light); }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="register-card">
+        <div class="header">
+            <h1><i class="fas fa-user-md icon"></i> تسجيل طبيب - Inscription Médecin</h1>
+            <p class="subtitle">المنصة الطبية الرقمية - Plateforme Médicale Numérique</p>
+        </div>
+
+        <div class="required-note">
+            <i class="fas fa-info-circle"></i>
+            <strong>ملاحظة مهمة - Note Importante:</strong><br>
+            املأ النموذج أدناه للتسجيل في المنصة الطبية<br>
+            Remplissez le formulaire ci-dessous pour vous inscrire sur la plateforme médicale
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message error">
+                            <i class="fas fa-exclamation-triangle"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="email">Email - البريد الإلكتروني *</label>
+                    <input type="email" id="email" name="email" value="{{ request.form.get('email', '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe - كلمة المرور *</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirmer le mot de passe - تأكيد كلمة المرور *</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-plus"></i> تسجيل - S'inscrire
+                </button>
+
+                <div class="login-link">
+                    لديك حساب بالفعل؟ - Vous avez déjà un compte ? 
+                    <a href="{{ url_for('login') }}">تسجيل الدخول - Se connecter</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
